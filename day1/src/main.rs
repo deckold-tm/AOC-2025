@@ -72,32 +72,73 @@ impl ZeroCount {
                 if new_val == 0 {
                     self.count += 1
                 };
+                log::trace!(
+                    "new_value: {:?}, command: {:?}, count: {:?}",
+                    new_val,
+                    m,
+                    self.count
+                );
                 new_val
             }
             Direction::R(val) => {
                 let x = cur + val;
                 self.count += x / WRAP;
-                x % WRAP
+                let new_val = x % WRAP;
+                log::trace!(
+                    "new_value: {:?}, command: {:?}, count: {:?}",
+                    new_val,
+                    m,
+                    self.count
+                );
+                new_val
             }
+        }
+    }
+}
+struct Main {
+    start_value: isize,
+    part1: ZeroCount,
+    part2: ZeroCount,
+}
+impl Main {
+    fn new() -> Self {
+        Self {
+            start_value: 50,
+            part1: ZeroCount::new(),
+            part2: ZeroCount::new(),
+        }
+    }
+    fn run(&mut self, input: &str) -> () {
+        let commands = parse_file(input);
+        match commands {
+            Ok(commands) => {
+                commands
+                    .iter()
+                    .fold(self.start_value, |a, b| self.part1.rotate1(a, b));
+                println!("Result of part1 is: {:?}", self.part1.count);
+                commands
+                    .iter()
+                    .fold(self.start_value, |a, b| self.part2.rotate2(a, b));
+                println!("Result of part2 is: {:?}", self.part2.count);
+            }
+            Err(err) => log::error!("Parsing of input file failed with error:\n{:?}", err),
         }
     }
 }
 
 fn main() {
     env_logger::init();
-    let path = "./input.txt";
-    if let Ok(input) = read_to_string(path) {
-        let mut part1 = ZeroCount::new();
-        let mut part2 = ZeroCount::new();
-        if let Ok(commands) = parse_file(&input) {
-            commands.iter().fold(50, |a, b| part1.rotate1(a, b));
-            println!("Result of part1 is: {:?}", part1.count);
-            commands.iter().fold(50, |a, b| part2.rotate2(a, b));
-            println!("Result of part2 is: {:?}", part2.count);
-        } else {
-            log::error!("Parsing of input file failed")
+    let path = "./test.txt";
+    let input = read_to_string(path);
+    match input {
+        Ok(input) => {
+            let mut state = Main::new();
+            state.run(&input);
         }
-    } else {
-        log::error!("Failed to parse input file to string {:?}", path)
+        Err(err) => log::error!(
+            "Failed to parse input file to string {:?} with error:\n{:?}",
+            path,
+            err
+        ),
     }
 }
