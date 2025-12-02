@@ -3,7 +3,7 @@ use nom::Finish;
 use nom::IResult;
 use nom::Parser;
 use nom::branch::alt;
-use nom::character::complete::{char, digit1, newline};
+use nom::character::complete::{char, digit1, line_ending};
 use nom::combinator::map_res;
 use nom::multi::many1;
 use nom::sequence::{pair, terminated};
@@ -28,7 +28,7 @@ fn parse_direction(input: &str) -> IResult<&str, Direction> {
     .parse(input)
 }
 fn parse_line(input: &str) -> IResult<&str, Direction> {
-    terminated(parse_direction, newline).parse(input)
+    terminated(parse_direction, line_ending).parse(input)
 }
 
 fn parse_value(input: &str) -> IResult<&str, isize> {
