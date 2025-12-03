@@ -6,14 +6,14 @@ mod tests {
     #[test]
     fn test_part1() {
         env_logger::init();
-        assert_eq!(part1(TEST_INPUT), 357)
+        assert_eq!(part1(TEST_INPUT).unwrap(), 357)
     }
 }
 
 use std::fmt::Debug;
 use std::fs::read_to_string;
 
-use nom::character::complete::{digit1, line_ending, u32};
+use nom::character::complete::{digit1, line_ending};
 use nom::combinator::map_res;
 use nom::error::Error;
 use nom::{Finish, IResult, Parser};
@@ -33,7 +33,7 @@ fn parse_input(input: &str) -> Result<(&str, Vec<Vec<u32>>), Error<&str>> {
     many1(digits).parse(input).finish()
 }
 
-fn part1(input: &str) -> usize {
+fn part1(input: &str) -> Option<usize> {
     let parsed_input = parse_input(input);
     match parsed_input {
         Ok((_, input)) => {
@@ -43,11 +43,11 @@ fn part1(input: &str) -> usize {
                 .map(|battery: Vec<u32>| {
                     let (idx, a) = battery[..battery.len() - 1].iter().enumerate().fold(
                         (0, 0),
-                        |cur, (idx, a)| {
+                        |cur, (idx, a)| -> (usize, u32) {
                             if cur.1 <= *a {
-                                (if cur.1 == *a { cur } else { (idx, *a) })
+                                if cur.1 != *a { (idx, *a) } else { cur }
                             } else {
-                                (cur)
+                                cur
                             }
                         },
                     );
@@ -61,9 +61,12 @@ fn part1(input: &str) -> usize {
                 .collect::<Vec<u32>>()
                 .iter()
                 .sum();
-            jolts as usize
+            Some(jolts as usize)
         }
-        Err(err) => todo!(),
+        Err(err) => {
+            log::error!("Unable to parse input with error: {:?}", err);
+            None
+        }
     }
 }
 
