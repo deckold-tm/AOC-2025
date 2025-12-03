@@ -44,11 +44,7 @@ fn part1(input: &str) -> Option<usize> {
                     let (idx, a) = battery[..battery.len() - 1].iter().enumerate().fold(
                         (0, 0),
                         |cur, (idx, a)| -> (usize, u32) {
-                            if cur.1 <= *a {
-                                if cur.1 != *a { (idx, *a) } else { cur }
-                            } else {
-                                cur
-                            }
+                            if *a > cur.1 { (idx, *a) } else { cur }
                         },
                     );
                     log::debug!("{:?}\n{:?}, {:?}", battery, idx, a);
