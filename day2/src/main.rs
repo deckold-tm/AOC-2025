@@ -17,10 +17,15 @@ mod tests {
     #[test]
     fn test_part1() -> () {
         let parsed_input = parse_input(TEST_INPUT).unwrap();
-        assert_eq!(part1(parsed_input), 1227775554);
+        assert_eq!(part1(&parsed_input), 1227775554);
+    }
+    #[test]
+    fn test_part2() -> () {
+        let parsed_input = parse_input(TEST_INPUT).unwrap();
+        assert_eq!(part2(&parsed_input), 4174379265);
     }
 }
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 struct Range {
     start: usize,
     end: usize,
@@ -59,7 +64,7 @@ fn parse_input(input: &str) -> Result<Vec<Range>, nom::error::Error<&str>> {
         .finish()?;
     Ok(ranges)
 }
-fn check_bad2(input: &String) -> bool {
+fn check_bad2(input: &String) -> Option<usize> {
     let len = input.len();
     let window_len = 1..=len / 2;
     window_len
@@ -77,6 +82,7 @@ fn check_bad2(input: &String) -> bool {
             }
         })
         .any(|x| x)
+        .then(|| Some(input.parse().unwrap()))?
 }
 
 fn check_bad(num: &String) -> Option<usize> {
@@ -90,7 +96,7 @@ fn check_bad(num: &String) -> Option<usize> {
     }
 }
 
-fn part1(parsed_input: Vec<Range>) -> usize {
+fn part1(parsed_input: &Vec<Range>) -> usize {
     log::debug!("{:?}", parsed_input);
     let ranges: Vec<String> = parsed_input
         .into_iter()
@@ -100,18 +106,14 @@ fn part1(parsed_input: Vec<Range>) -> usize {
     let count: usize = ranges.iter().map(check_bad).flatten().sum();
     count
 }
-fn part2(parsed_input: Vec<Range>) -> usize {
+fn part2(parsed_input: &Vec<Range>) -> usize {
     log::debug!("{:?}", parsed_input);
     let ranges: Vec<String> = parsed_input
         .into_iter()
         .map(|x| x.to_strings())
         .flatten()
         .collect();
-    let count: usize = ranges
-        .iter()
-        .map(check_bad2)
-        .map(|x| if x { 1 } else { 0 })
-        .sum();
+    let count: usize = ranges.iter().map(check_bad2).flatten().sum();
     count
 }
 
@@ -127,7 +129,8 @@ fn main() {
             let parsed_input = parse_input(&file);
             match parsed_input {
                 Ok(input) => {
-                    print_ans(1, part1(input));
+                    print_ans(1, part1(&input));
+                    print_ans(2, part2(&input));
                 }
                 Err(err) => log::error!("Parsing failed with error:\n{:?}", err),
             }
