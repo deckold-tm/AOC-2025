@@ -7,3 +7,5 @@ edition = "2024"
 env_logger = "0.11.8"
 log = "0.4.29"
 nom = "8.0.0"
+[profile.dev]
+opt-level=3
