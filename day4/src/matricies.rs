@@ -22,7 +22,6 @@ where
 pub fn convolv<T>(map_array: &Array2<T>, kernel: &Array2<T>) -> Array2<T>
 where
     T: Mul<Output = T> + Clone + Debug + Default + ScalarOperand + num_traits::Zero,
-    // U: Mul<Output = U> + Add<Output = U> + ScalarOperand,
 {
     let kernel_size = kernel.shape();
     let pad_width = (kernel_size[0] - 1) / 2;
@@ -33,7 +32,7 @@ where
     let padded = pad(&map_array, pad_width, T::default());
     log::trace!("Padded\n\n{:?}\n\n", padded);
     let output =
-        Zip::from(padded.windows(kernel.raw_dim())).map_collect(|window| (&window * kernel).sum()); //(&window * kernel).sum());
+        Zip::from(padded.windows(kernel.raw_dim())).map_collect(|window| (&window * kernel).sum());
     log::debug!("Convolution\n\n{:?}\n\n", output);
     output
 }
