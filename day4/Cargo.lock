@@ -81,6 +81,7 @@ dependencies = [
  "log",
  "ndarray",
  "nom",
+ "num-traits",
  "thiserror",
 ]
 
