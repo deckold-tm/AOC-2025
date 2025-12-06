@@ -16,13 +16,10 @@ mod tests {
 }
 
 use nom::character::complete::{digit1, line_ending};
-use nom::combinator::map_res;
-use nom::error::Error;
 use nom::{Finish, IResult, Parser};
+use nom::{combinator::map_res, error::Error};
 use nom::{multi::many1, sequence::terminated};
-use std::fmt::Debug;
-use std::fs::read_to_string;
-use std::iter::Sum;
+use std::{fmt::Debug, fs::read_to_string, iter::Sum};
 
 fn digits(input: &str) -> IResult<&str, Vec<u32>> {
     let digits = terminated(digit1, line_ending);

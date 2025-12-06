@@ -1,12 +1,9 @@
 use std::fmt::Debug;
 use std::fs::read_to_string;
-use std::path::Path;
 
 use nom::character::complete::{char, digit1};
-use nom::combinator::map_res;
-use nom::multi::separated_list1;
-use nom::sequence::separated_pair;
 use nom::{Finish, IResult, Parser};
+use nom::{combinator::map_res, multi::separated_list1, sequence::separated_pair};
 
 #[cfg(test)]
 mod tests {

@@ -1,12 +1,8 @@
 use log;
-use nom::Finish;
-use nom::IResult;
-use nom::Parser;
-use nom::branch::alt;
 use nom::character::complete::{char, digit1, line_ending};
-use nom::combinator::map_res;
-use nom::multi::many1;
 use nom::sequence::{pair, terminated};
+use nom::{Finish, IResult, Parser};
+use nom::{branch::alt, combinator::map_res, multi::many1};
 use std::fs::read_to_string;
 
 const WRAP: isize = 100;
