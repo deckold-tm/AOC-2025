@@ -18,18 +18,9 @@ pub enum ParsingError<T> {
 
 pub fn parse_input<T>(input: &str) -> Result<DayInput<T>, ParsingError<&str>>
 where
-    T: FromStr
-        + PartialOrd
-        + Clone
-        + Ord
-        + Debug
-        + Sub<Output = T>
-        + Default
-        + AddAssign
-        + One
-        + Add<Output = T>,
+    T: FromStr + PartialOrd,
 {
-    let (_, (ranges, items)) = pair(top, bottom).parse(&input).finish()?;
+    let (_, (ranges, items)) = pair(top, bottom).parse(input).finish()?;
     Ok(DayInput::new(ranges, items))
 }
 
@@ -68,15 +59,10 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ONCE;
     use std::fs::read_to_string;
-    fn init() {
-        ONCE.call_once(env_logger::init);
-    }
 
     #[test]
     fn test_parsing_input() {
-        init();
         let text = read_to_string("./example").unwrap();
         let (rem, parsed_top) = top::<usize>(&text).unwrap();
         log::debug!("Parsed input for the top:\n {:?}", parsed_top);

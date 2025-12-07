@@ -1,55 +1,37 @@
 // use rayon::prelude::*;
-use num_traits::{One, Zero, one};
-use std::fmt::Debug;
+use num_traits::{One, Zero};
 use std::ops::{Add, AddAssign, Sub};
 use std::{ops::RangeInclusive, str::FromStr};
 
-pub struct DayInput<T>
-where
-    T: Ord
-        + PartialEq
-        + FromStr
-        + Clone
-        + PartialOrd
-        + Debug
-        + Default
-        + Sub<Output = T>
-        + Add<Output = T>
-        + AddAssign
-        + One,
-{
+pub struct DayInput<T> {
     ranges: Vec<RangeInclusive<T>>,
     items: Vec<T>,
 }
-impl<T> DayInput<T>
-where
-    T: FromStr
-        + PartialOrd
-        + Ord
-        + PartialEq
-        + One
-        + Clone
-        + Debug
-        + Add<Output = T>
-        + Sub<Output = T>
-        + Default
-        + AddAssign,
-{
+impl<T> DayInput<T> {
     pub fn new(ranges: Vec<RangeInclusive<T>>, items: Vec<T>) -> Self {
         Self { ranges, items }
     }
-    pub fn count_fresh(&self) -> usize {
+    pub fn part1(&self) -> usize
+    where
+        T: PartialOrd,
+    {
         self.items
             .iter()
             .map(|item| self.in_range(item))
             .filter(|x| *x)
             .count()
     }
-    fn in_range(&self, item: &T) -> bool {
+    fn in_range(&self, item: &T) -> bool
+    where
+        T: PartialOrd,
+    {
         self.ranges.iter().any(|range| range.contains(item))
     }
-    pub fn n_in_ranges(&self) -> T {
-        let mut count = T::default();
+    pub fn part2(&self) -> T
+    where
+        T: FromStr + Ord + One + Zero + Clone + Add<Output = T> + Sub<Output = T> + AddAssign,
+    {
+        let mut count = T::zero();
         let mut ranges = self.ranges.clone();
         ranges.sort_by_key(|range| range.start().clone());
         let mut rs = ranges.into_iter();
@@ -61,13 +43,12 @@ where
                 .expect("ranges_condensed can't be empty");
             if prev.contains(r.start()) {
                 if !prev.contains(r.end()) {
-                    *prev = (prev.start().clone()..=r.end().clone())
+                    *prev = prev.start().clone()..=r.end().clone()
                 }
             } else {
                 ranges_condensed.push(r.clone());
             };
         }
-        log::debug!("{:?}", ranges_condensed);
         ranges_condensed
             .iter()
             .for_each(|r| count += T::one() + (r.end().clone() - r.start().clone()));
