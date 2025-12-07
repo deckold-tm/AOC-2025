@@ -5,9 +5,8 @@ use nom::error::Error as _NomError;
 use nom::multi::{many0, many1};
 use nom::sequence::{pair, separated_pair, terminated};
 use nom::{Finish, IResult, Parser};
-use num_traits::One;
 use std::fmt::Debug;
-use std::ops::{Add, AddAssign, RangeInclusive, Sub};
+use std::ops::RangeInclusive;
 use std::str::FromStr;
 
 #[derive(thiserror::Error, Debug)]
